@@ -1,9 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { AuthService } from './providers/auth.service';
+import { Controller } from '@nestjs/common';
 
 @Controller('auth')
-@ApiTags('Authentication')
 export class AuthController {
-  @Get()
-  public login(email: string, password: string) {}
+  constructor(
+    /*
+     * Injecting Auth Service
+     */
+    private readonly authService: AuthService,
+  ) {}
 }

@@ -1,60 +1,65 @@
 import {
-  Body,
   Controller,
-  DefaultValuePipe,
-  Delete,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
+  Body,
+  ParseIntPipe,
+  DefaultValuePipe,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { GetUserDto } from './dto/get-user.dto';
-import { PatchUserDto } from './dto/patch-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { GetUsersParamDto } from './dtos/get-users-param.dto';
+import { PatchUserDto } from './dtos/patch-user.dto';
+import { UsersService } from './providers/users.service';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
 @ApiTags('Users')
 export class UsersController {
-  private readonly usersService: UsersService;
-  constructor(usersService: UsersService) {
-    this.usersService = usersService;
+  constructor(
+    // Injecting Users Service
+    private readonly usersService: UsersService,
+  ) {}
+
+  @Get('/:id?')
+  @ApiOperation({
+    summary: 'Fetches a list of registered users on the application.',
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: String,
+    description: 'The upper limit of pages you want the pagination to return',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    type: String,
+    description:
+      'The position of the page number that you want the API to return',
+    required: false,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Users fetched successfully based on the query',
+  })
+  public getUsers(
+    @Param() getUserParamDto: GetUsersParamDto,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  ) {
+    return this.usersService.findAll(getUserParamDto, limit, page);
   }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  public createUsers(@Body() createUserDto: CreateUserDto) {
     console.log(createUserDto instanceof CreateUserDto);
-    return this.usersService.create(createUserDto);
-  }
-
-  @Get()
-  findAll(
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('sort', new DefaultValuePipe('asc')) sort: string,
-  ) {
-    return this.usersService.findAll(limit, page, sort);
-  }
-
-  @Get(':id')
-  findOne(
-    @Param()
-    getUserDto: GetUserDto,
-  ) {
-    console.log(getUserDto.getId());
-    return this.usersService.findOne(+getUserDto);
+    return 'You sent a post request to users endpoint';
   }
 
   @Patch()
-  update(@Body() patchUserDto: PatchUserDto) {
+  public patchUser(@Body() patchUserDto: PatchUserDto) {
     return patchUserDto;
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
   }
 }
