@@ -11,7 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: ['.dev.env'],
     }),
     UsersModule,
     PostsModule,
@@ -28,6 +28,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         database: configService.get<string>('DB_DATABASE'),
         entities: [],
         synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
+        //retry attempts
+        retryAttempts: 5,
+        connectTimeout: 10000,
+        logger: 'simple-console',
       }),
     }),
   ],
