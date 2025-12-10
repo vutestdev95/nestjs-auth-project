@@ -3,6 +3,7 @@
 </p>
 
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
   <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
@@ -25,6 +26,28 @@
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+
+## Environment Configuration
+
+This project uses environment variables for configuration. Create a `.env` file in the root directory based on
+`.env.example`:
+
+```bash
+# Database Configuration
+DB_TYPE=postgres
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=your_password_here
+DB_DATABASE=nest_auth_db
+DB_SYNCHRONIZE=true
+
+# Application Configuration
+PORT=3000
+NODE_ENV=development
+```
+
+**⚠️ Important:** Never commit your `.env` file to version control. It's already included in `.gitignore`.
 
 ## Installation
 
@@ -60,7 +83,8 @@ $ npm run test:cov
 
 ## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If
+you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
 ## Stay in touch
 

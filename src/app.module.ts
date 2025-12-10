@@ -4,9 +4,33 @@ import { AuthModule } from './auth/auth.module';
 import { Module } from '@nestjs/common';
 import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [UsersModule, PostsModule, AuthModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    UsersModule,
+    PostsModule,
+    AuthModule,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_DATABASE'),
+        entities: [],
+        synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
+      }),
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
