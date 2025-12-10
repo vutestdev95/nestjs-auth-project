@@ -7,10 +7,25 @@ import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 
+/**
+ * Bootstrap function that initializes and configures the NestJS application.
+ * Sets up global validation pipes, Swagger documentation, and starts the HTTP server.
+ *
+ * Configures the following features:
+ * - Global validation with whitelist and transformation
+ * - Swagger API documentation at /api endpoint
+ * - HTTP server listening on port 3000
+ *
+ * @async
+ * @function bootstrap
+ * @returns {Promise<void>} Promise that resolves when the application has started
+ */
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   /*
    * Use validation pipes globally
+   * Enables automatic validation of incoming requests against DTOs
    */
   app.useGlobalPipes(
     new ValidationPipe({

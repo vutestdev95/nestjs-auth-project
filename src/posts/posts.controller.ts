@@ -4,24 +4,41 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dtos/create-post.dto';
 import { PatchPostDto } from './dtos/patch-post.dto';
 
+/**
+ * Controller responsible for handling blog post-related HTTP requests.
+ * Provides endpoints for creating, reading, and updating blog posts.
+ *
+ * @class PostsController
+ */
 @Controller('posts')
 @ApiTags('Posts')
 export class PostsController {
-  constructor(
-    /*
-     *  Injecting Posts Service
-     */
-    private readonly postsService: PostsService,
-  ) {}
+  /**
+   * Creates an instance of PostsController.
+   *
+   * @param {PostsService} postsService - The injected posts service for business logic operations
+   */
+  constructor(private readonly postsService: PostsService) {}
 
-  /*
-   * GET localhost:3000/posts/:userId
+  /**
+   * Retrieves all posts for a specific user or all posts if no userId is provided.
+   *
+   * @param {string} userId - The optional user ID to filter posts
+   * @returns {Array} Array of post objects associated with the user
+   * @example GET /posts/123
    */
   @Get('/:userId?')
   public getPosts(@Param('userId') userId: string) {
     return this.postsService.findAll(userId);
   }
 
+  /**
+   * Creates a new blog post.
+   * Validates the post data and persists it to the database.
+   *
+   * @param {CreatePostDto} createPostDto - The post data for creating a new blog post
+   * @returns {void} Logs the post data to console
+   */
   @ApiOperation({
     summary: 'Creates a new post for the blog.',
   })
@@ -35,6 +52,13 @@ export class PostsController {
     console.log(createPostDto);
   }
 
+  /**
+   * Partially updates an existing blog post.
+   * Only the fields provided in the request body will be updated.
+   *
+   * @param {PatchPostDto} patchPostsDto - The partial post data to update including post ID
+   * @returns {void} Logs the updated post data to console
+   */
   @ApiOperation({
     summary: 'Updates and existing blog post in the database.',
   })
