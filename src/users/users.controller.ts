@@ -1,9 +1,20 @@
-import { Body, Controller, DefaultValuePipe, Get, Param, ParseIntPipe, Patch, Post, Query, } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { GetUsersParamDto } from './dtos/get-users-param.dto';
 import { PatchUserDto } from './dtos/patch-user.dto';
 import { UsersService } from './providers/users.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UserEntity } from './entities/user.entity';
 
 /**
  * Controller responsible for handling user-related HTTP requests.
@@ -67,9 +78,10 @@ export class UsersController {
    * @returns {string} Confirmation message of user creation
    */
   @Post()
-  public createUsers(@Body() createUserDto: CreateUserDto) {
-    console.log(createUserDto instanceof CreateUserDto);
-    return 'You sent a post request to users endpoint';
+  public async createUsers(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<UserEntity> {
+    return await this.usersService.createUser(createUserDto);
   }
 
   /**

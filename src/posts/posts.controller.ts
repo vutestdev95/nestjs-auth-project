@@ -3,6 +3,7 @@ import { PostsService } from './providers/posts.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dtos/create-post.dto';
 import { PatchPostDto } from './dtos/patch-post.dto';
+import { PostEntity } from './entities/post.entity';
 
 /**
  * Controller responsible for handling blog post-related HTTP requests.
@@ -20,16 +21,9 @@ export class PostsController {
    */
   constructor(private readonly postsService: PostsService) {}
 
-  /**
-   * Retrieves all posts for a specific user or all posts if no userId is provided.
-   *
-   * @param {string} userId - The optional user ID to filter posts
-   * @returns {Array} Array of post objects associated with the user
-   * @example GET /posts/123
-   */
-  @Get('/:userId?')
-  public getPosts(@Param('userId') userId: string) {
-    return this.postsService.findAll(userId);
+  @Get()
+  public async getAllPosts() {
+    return this.postsService.getAllPosts();
   }
 
   /**
@@ -48,8 +42,10 @@ export class PostsController {
       'You get a success 201 response if the post is created successfully',
   })
   @Post()
-  public createPost(@Body() createPostDto: CreatePostDto) {
-    console.log(createPostDto);
+  public async createPost(
+    @Body() createPostDto: CreatePostDto,
+  ): Promise<PostEntity> {
+    return await this.postsService.createOne(createPostDto);
   }
 
   /**

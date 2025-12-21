@@ -1,5 +1,5 @@
 // For Documenation refer url: https://docs.nestjs.com/openapi/types-and-parameters
-import { postStatus } from '../enums/post-status.enum';
+import { PostStatus } from '../enums/post-status.enum';
 import {
   IsArray,
   IsEnum,
@@ -10,12 +10,13 @@ import {
   IsString,
   IsUrl,
   Matches,
+  MaxLength,
   MinLength,
   ValidateNested,
 } from 'class-validator';
 import { PostType } from '../enums/post-type.enum';
 import { Type } from 'class-transformer';
-import { CreatePostMetaOptionsDto } from './create-post-meta-options.dto';
+import { CreateMetaOptionsDto } from '../../meta-data-options/dto/create-meta-options.dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 /**
@@ -36,6 +37,7 @@ export class CreatePostDto {
   @ApiProperty()
   @IsString()
   @MinLength(4)
+  @MaxLength(255)
   @IsNotEmpty()
   title: string;
 
@@ -72,6 +74,7 @@ export class CreatePostDto {
     message:
       'A slug should be all small letters and uses only "-" and without spaces. For example "my-url"',
   })
+  @MaxLength(256)
   slug: string;
 
   /**
@@ -79,16 +82,16 @@ export class CreatePostDto {
    * Controls the visibility and workflow state of the post.
    * Possible values: 'draft', 'scheduled', 'review', 'published'
    *
-   * @type {postStatus}
+   * @type {PostStatus}
    * @example postStatus.DRAFT
    */
   @ApiProperty({
-    enum: postStatus,
+    enum: PostStatus,
     description: "Possible values 'draft', 'scheduled', 'review', 'published'",
   })
-  @IsEnum(postStatus)
+  @IsEnum(PostStatus)
   @IsNotEmpty()
-  status: postStatus;
+  status: PostStatus;
 
   /**
    * The main content of the blog post (optional).
@@ -128,6 +131,7 @@ export class CreatePostDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsUrl()
+  @MaxLength(1024)
   featuredImageUrl?: string;
 
   /**
@@ -165,27 +169,24 @@ export class CreatePostDto {
    * Allows storing additional key-value metadata.
    * Useful for custom fields and extended post properties.
    *
-   * @type {CreatePostMetaOptionsDto[]}
+   * @type {CreateMetaOptionsDto}
    * @example [{ key: 'sidebarEnabled', value: true }]
    */
   @ApiPropertyOptional({
-    type: 'array',
+    type: 'object',
     required: false,
     items: {
       type: 'object',
       properties: {
-        key: {
-          type: 'string',
-        },
-        value: {
-          type: 'string',
+        metaValue: {
+          type: 'json',
+          example: '{"key": "sidebarEnabled", "value": true}',
         },
       },
     },
   })
   @IsOptional()
-  @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreatePostMetaOptionsDto)
-  metaOptions?: CreatePostMetaOptionsDto[];
+  @Type(() => CreateMetaOptionsDto)
+  metaOptions?: CreateMetaOptionsDto | null;
 }

@@ -1,4 +1,12 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 /**
  * Data Transfer Object for creating a new user.
@@ -42,6 +50,7 @@ export class CreateUserDto {
    */
   @IsEmail()
   @IsNotEmpty()
+  @MaxLength(96)
   email: string;
 
   /**
@@ -55,6 +64,7 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
+  @MaxLength(96)
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, {
     message:
       'Minimum eight characters, at least one letter, one number and one special character',

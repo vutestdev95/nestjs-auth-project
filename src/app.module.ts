@@ -1,11 +1,14 @@
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MetaDataOptionsModule } from './meta-data-options/meta-data-options.module';
+import { TagsModule } from './tags/tags.module';
+import { LoggerMiddleware } from './commons/logger.middleware';
 
 @Module({
   imports: [
@@ -26,7 +29,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
-        entities: [],
+        autoLoadEntities: true,
         synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
         //retry attempts
         retryAttempts: 5,
@@ -34,8 +37,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         logger: 'simple-console',
       }),
     }),
+    TagsModule,
+    MetaDataOptionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
